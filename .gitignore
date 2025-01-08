@@ -1,0 +1,9 @@
+# Node.js (Frontend)
+frontend/node_modules/
+frontend/build/
+
+# Java (Backend)
+backend/target/
+*.class
+*.log
+backend/.env
