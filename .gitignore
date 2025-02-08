@@ -7,3 +7,5 @@ backend/target/
 *.class
 *.log
 backend/.env
+backend/src/main/resources/application.properties
+
