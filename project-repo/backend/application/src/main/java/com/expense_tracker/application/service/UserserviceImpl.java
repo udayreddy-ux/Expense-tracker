@@ -87,4 +87,24 @@ public class UserserviceImpl implements Userservice{
 		user.setPassword(passwordEncoder.encode(newPassword));
 		userRepository.save(user);
 	}
+	
+	public Users getProfileDetails(String email) {
+		Users user=userRepository.findByEmail(email);
+		if(user == null) {
+			throw new IllegalArgumentException("User not found");
+		}
+		return user;
+	}
+	
+	public Users updateUserProfile(String email, Users updatedUser) {
+		Users user=userRepository.findByEmail(email);
+		if(user==null) {
+			throw new IllegalArgumentException("User not found");
+		}
+		user.setEmail(updatedUser.getEmail());
+		user.setFirst_name(updatedUser.getFirst_name());
+		user.setLast_name(updatedUser.getLast_name());
+		user.setMobile(updatedUser.getMobile());
+		return userRepository.save(user);
+	}
 }

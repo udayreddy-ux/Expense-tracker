@@ -19,6 +19,7 @@ import jakarta.validation.Valid;
 
 import com.expense_tracker.application.dao.UserRepository;
 import com.expense_tracker.application.dto.CategorySpendDto;
+import com.expense_tracker.application.dto.CurrencyWiseSpend;
 import com.expense_tracker.application.dto.MonthandCategoryDto;
 import com.expense_tracker.application.dto.MonthlySpentDto;
 import com.expense_tracker.application.dto.PayeeRanking;
@@ -139,9 +140,21 @@ public class ExpenseController {
 		if(userId==null) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		}
-        List<MonthlySpentDto> monthlySpend = expenseService.getMonthlySpendByUser(userId,year, currency);
+        List<MonthlySpentDto> monthlySpend = expenseService.getMonthlySpendByUser(userId,year,currency);
         return ResponseEntity.ok(monthlySpend);
     }
+	
+	@GetMapping("/monthly-currency-spend")
+	@PreAuthorize("isAuthenticated()")
+	public ResponseEntity<List<CurrencyWiseSpend>> getMonthlyCurrencyWiseSpend(@RequestParam Integer year){
+		String userEmail = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		Long userId = expenseService.findUserIdbyEmail(userEmail);
+		if(userId==null) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+		}
+		List<CurrencyWiseSpend> currencyWiseSpend=expenseService.getSpendingByCurrency(userId, year);
+		return ResponseEntity.ok(currencyWiseSpend);
+	}
 	
 	@GetMapping("/monthwisecategory")
 	@PreAuthorize("isAuthenticated()")

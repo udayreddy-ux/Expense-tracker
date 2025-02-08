@@ -18,6 +18,7 @@ import org.springframework.data.domain.Sort;
 import com.expense_tracker.application.dao.ExpenseRepository;
 import com.expense_tracker.application.dao.UserRepository;
 import com.expense_tracker.application.dto.CategorySpendDto;
+import com.expense_tracker.application.dto.CurrencyWiseSpend;
 import com.expense_tracker.application.dto.MonthandCategoryDto;
 import com.expense_tracker.application.dto.MonthlySpentDto;
 import com.expense_tracker.application.dto.PayeeRanking;
@@ -137,5 +138,11 @@ public class ExpenseServiceImpl implements ExpensesService{
 		            ((Number) row[3]).intValue() // rankPay
 		        ))
 		        .toList();
+	}
+
+	@Override
+	public List<CurrencyWiseSpend> getSpendingByCurrency(Long userId, Integer year) {
+		// TODO Auto-generated method stub
+		return expenseRepository.getMonthlySpendingByCurrency(userId, year);
 	}
 }

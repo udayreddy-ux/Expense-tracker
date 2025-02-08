@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import com.expense_tracker.application.dto.CategorySpendDto;
+import com.expense_tracker.application.dto.CurrencyWiseSpend;
 import com.expense_tracker.application.dto.MonthandCategoryDto;
 import com.expense_tracker.application.dto.MonthlySpentDto;
 import com.expense_tracker.application.dto.PayeeRanking;
@@ -30,4 +31,5 @@ public interface ExpensesService {
 	List<MonthandCategoryDto> getMonthwiseCategorySpending(Long userId,Integer year,String currency);
 	List<TotalSpendingDto> getTotalSpendByCategoryandMonth(Long userId,String monthName,Integer year,String currency);
 	List<PayeeRanking> getPayeeRanking(Long userId,String currency);
+	List<CurrencyWiseSpend> getSpendingByCurrency(Long userId,Integer year);
 }
