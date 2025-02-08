@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import com.expense_tracker.application.dto.CategorySpendDto;
+import com.expense_tracker.application.dto.CurrencyWiseSpend;
 import com.expense_tracker.application.dto.MonthandCategoryDto;
 import com.expense_tracker.application.dto.MonthlySpentDto;
 import com.expense_tracker.application.dto.PayeeRanking;
@@ -56,6 +57,7 @@ public interface ExpenseRepository extends JpaRepository<Expenses,Long>{
 		       "ORDER BY currency ASC")
 	List<String> getAvailableCurrerncies(Long userId);
 	
+	
 	/*
 	@Query("SELECT new com.expense_tracker.application.dto.MonthlySpentDto(" +
 		       "EXTRACT(MONTH FROM e.createdAt) AS month, " +
@@ -77,6 +79,19 @@ public interface ExpenseRepository extends JpaRepository<Expenses,Long>{
 		       "GROUP BY EXTRACT(MONTH FROM e.createdAt), TO_CHAR(e.createdAt, 'Month'), EXTRACT(YEAR FROM e.createdAt) " +
 		       "ORDER BY month")
 	List<MonthlySpentDto> getMonthlySpendByUserAndCurrency(Long userId,@Param("year") Integer year,@Param("currency") String currency);
+	
+	@Query("SELECT new com.expense_tracker.application.dto.CurrencyWiseSpend(" +
+			"EXTRACT(MONTH FROM e.createdAt) AS month, " +
+			"TO_CHAR(e.createdAt,'Month') AS monthName, " +
+			"EXTRACT(YEAR FROM e.createdAt) AS year, "+
+			"e.currency ,"+
+			"COALESCE(SUM(e.amount),0)) " +
+			"FROM Expenses e " +
+			"WHERE e.user.id = :userId AND EXTRACT(YEAR FROM e.createdAt) = :year " +
+			"GROUP BY EXTRACT(MONTH FROM e.createdAt), TO_CHAR(e.createdAt,'Month'),EXTRACT(YEAR FROM e.createdAt),e.currency " +
+			"ORDER BY month"
+			)
+	List<CurrencyWiseSpend> getMonthlySpendingByCurrency(Long userId,@Param("year") Integer year);
 	
 	/*
 	@Query("SELECT new com.expense_tracker.application.dto.MonthandCategoryDto(" +
