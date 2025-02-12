@@ -232,7 +232,7 @@ table th {
   font-family:'Oswald', sans-serif;
   font-size: 48px;
   font-weight: 700;
-  text-transform: uppercase;
+  
   color: #2C3E50;
   letter-spacing: 1.5px;
   text-align: center;
@@ -401,4 +401,28 @@ svg {
   
 }
 
+.emoji-spin{
+  display: inline-block !important;
+  animation: spin 1s infinite linear !important;
+  margin: 20px 0px !important
+}
 
+@keyframes spin {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(14deg);
+  }
+  50% {
+    transform: rotate(-8deg);
+  }
+  75% {
+    transform: rotate(14deg);
+  }
+}
+
+.align-home-heading{
+  display: flex !important;
+  justify-content:flex-start !important;
+}
