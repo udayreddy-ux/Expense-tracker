@@ -11,8 +11,8 @@ const TotalAverageByCategory = ({ selectedCurrency, showModal, closeModal }) => 
   const [selectedMonth, setMonth] = useState(null);
   const [selectedYear, setYear] = useState(null);
   const [years, setAvailableYears] = useState([]);
-  const [loading, setLoading] = useState(false); // 🚀 Handle Loading State
-  const [noData, setNoData] = useState(false);  // 🚀 Track if No Data is Available
+  const [loading, setLoading] = useState(false); //  Handle Loading State
+  const [noData, setNoData] = useState(false);  //  Track if No Data is Available
 
   const months = [
     "January", "February", "March", "April", "May", "June", 

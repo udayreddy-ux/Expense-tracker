@@ -99,7 +99,7 @@ const Profile = () => {
     return (
         <div className="bg-gradient-custom">
             <div className="container m-5">
-                <h2 className="mb-4 text-center">Edit Personal Information</h2>
+                <h2 className="mb-4 text-center analytics-dashboard-heading" style={{fontSize: "30px"}}>Edit Personal Information</h2>
                 <form onSubmit={handleSubmit} noValidate>
                     <div className="mb-3">
                         <label htmlFor="first_name" className="form-label" style={{ fontSize: 20 }}>
@@ -149,7 +149,7 @@ const Profile = () => {
                         </label>
                         <input
                             type="text"
-                            className={`form-control ${errors.mobile ? "is-invalid" : ""}`}
+                            className={`form-control ${errors.mobile ? "is-invalid" : ""} `}
                             id="mobile"
                             name="mobile"
                             value={formData.mobile}
@@ -158,7 +158,7 @@ const Profile = () => {
                         {errors.mobile && <div className="invalid-feedback">{errors.mobile}</div>}
                     </div>
 
-                    <button type="submit" className="btn btn-warning" style={{marginTop:"10px"}}>
+                    <button type="submit" className="btn btn-secondary" style={{marginTop:"10px"}}>
                         Update
                     </button>
                 </form>

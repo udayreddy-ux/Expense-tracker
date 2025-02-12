@@ -19,10 +19,14 @@ import com.expense_tracker.application.dao.ExpenseRepository;
 import com.expense_tracker.application.dao.UserRepository;
 import com.expense_tracker.application.dto.CategorySpendDto;
 import com.expense_tracker.application.dto.CurrencyWiseSpend;
+import com.expense_tracker.application.dto.ExpenseDto;
 import com.expense_tracker.application.dto.MonthandCategoryDto;
 import com.expense_tracker.application.dto.MonthlySpentDto;
+import com.expense_tracker.application.dto.PayeeCountDto;
 import com.expense_tracker.application.dto.PayeeRanking;
+import com.expense_tracker.application.dto.TotalAmountSpending;
 import com.expense_tracker.application.dto.TotalSpendingDto;
+import com.expense_tracker.application.dto.TotalSpent;
 import com.expense_tracker.application.entity.Expenses;
 import com.expense_tracker.application.entity.Users;
 
@@ -145,4 +149,31 @@ public class ExpenseServiceImpl implements ExpensesService{
 		// TODO Auto-generated method stub
 		return expenseRepository.getMonthlySpendingByCurrency(userId, year);
 	}
+
+	@Override
+	public List<TotalAmountSpending> getTotalAmountSpent(Long userId, String currency) {
+		// TODO Auto-generated method stub
+		return expenseRepository.getTotalAmountSpent(userId, currency);
+	}
+
+	@Override
+	public List<ExpenseDto> getRecentTransactions(Long userId, String currency) {
+		// TODO Auto-generated method stub
+		Pageable pageable = PageRequest.of(0, 9, Sort.by("createdAt").descending());
+		return expenseRepository.getRecentTransactions(userId, currency,pageable);
+	}
+
+	@Override
+	public List<PayeeCountDto> getPayees(Long userId, String currency) {
+		// TODO Auto-generated method stub
+		Pageable pageable = PageRequest.of(0, 1);
+		return expenseRepository.getPayeeCount(userId, currency, pageable);
+	}
+
+	@Override
+	public List<TotalSpent> getTotalSpentAmount(Long userId, String currency) {
+		// TODO Auto-generated method stub
+		return expenseRepository.getTotalSpent(userId, currency);
+	}
+	
 }
