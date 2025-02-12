@@ -6,7 +6,7 @@ import SignUp from "./pages/Signup";
 import Home from "./pages/Home";
 import Analytics from "./pages/Analytics";
 import Expenses from "./pages/Expenses";
-import FileExport from "./pages/FileExport";
+import Profile from "./pages/Profile";
 import { Routes, Route, Link, Navigate } from 'react-router-dom';
 import { FaChartLine, FaExchangeAlt, FaFileExport, FaSignOutAlt, FaHome, FaSignInAlt } from 'react-icons/fa';
 import { useAuth } from "./components/AuthContext";
@@ -85,8 +85,8 @@ function App() {
                                         </Link>
                                     </li>
                                     <li className='nav-item'>
-                                        <Link className='nav-link' to="/Export">
-                                            <FaFileExport style={{ marginRight: "8px" }} />Export
+                                        <Link className='nav-link' to="/Profile">
+                                            <FaFileExport style={{ marginRight: "8px" }} />Profile
                                         </Link>
                                     </li>
                                     <li className='nav-item'>
@@ -110,7 +110,7 @@ function App() {
                 <Route path="/Home" element={isAuthenticated ? <Home /> : <Navigate to="/" />} />
                 <Route path="/Dashboard" element={isAuthenticated ? <Expenses /> : <Navigate to="/" />} />
                 <Route path="/Analytics" element={isAuthenticated ? <Analytics /> : <Navigate to="/" />} />
-                <Route path="/Export" element={isAuthenticated ? <FileExport /> : <Navigate to="/" />} />
+                <Route path="/Profile" element={isAuthenticated ? <Profile /> : <Navigate to="/" />} />
                 <Route path="/reset-password" element={<AccountPassword />} />
             </Routes>
         </>

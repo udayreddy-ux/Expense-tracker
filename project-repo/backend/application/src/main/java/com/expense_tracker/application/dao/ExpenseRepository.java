@@ -11,10 +11,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import com.expense_tracker.application.dto.CategorySpendDto;
+import com.expense_tracker.application.dto.CurrencyWiseSpend;
+import com.expense_tracker.application.dto.ExpenseDto;
 import com.expense_tracker.application.dto.MonthandCategoryDto;
 import com.expense_tracker.application.dto.MonthlySpentDto;
 import com.expense_tracker.application.dto.PayeeRanking;
+import com.expense_tracker.application.dto.TotalAmountSpending;
 import com.expense_tracker.application.dto.TotalSpendingDto;
+import com.expense_tracker.application.dto.TotalSpent;
+import com.expense_tracker.application.dto.PayeeCountDto;
 import com.expense_tracker.application.entity.Expenses;
 
 @Repository
@@ -56,6 +61,7 @@ public interface ExpenseRepository extends JpaRepository<Expenses,Long>{
 		       "ORDER BY currency ASC")
 	List<String> getAvailableCurrerncies(Long userId);
 	
+	
 	/*
 	@Query("SELECT new com.expense_tracker.application.dto.MonthlySpentDto(" +
 		       "EXTRACT(MONTH FROM e.createdAt) AS month, " +
@@ -77,6 +83,19 @@ public interface ExpenseRepository extends JpaRepository<Expenses,Long>{
 		       "GROUP BY EXTRACT(MONTH FROM e.createdAt), TO_CHAR(e.createdAt, 'Month'), EXTRACT(YEAR FROM e.createdAt) " +
 		       "ORDER BY month")
 	List<MonthlySpentDto> getMonthlySpendByUserAndCurrency(Long userId,@Param("year") Integer year,@Param("currency") String currency);
+	
+	@Query("SELECT new com.expense_tracker.application.dto.CurrencyWiseSpend(" +
+			"EXTRACT(MONTH FROM e.createdAt) AS month, " +
+			"TO_CHAR(e.createdAt,'Month') AS monthName, " +
+			"EXTRACT(YEAR FROM e.createdAt) AS year, "+
+			"e.currency ,"+
+			"COALESCE(SUM(e.amount),0)) " +
+			"FROM Expenses e " +
+			"WHERE e.user.id = :userId AND EXTRACT(YEAR FROM e.createdAt) = :year " +
+			"GROUP BY EXTRACT(MONTH FROM e.createdAt), TO_CHAR(e.createdAt,'Month'),EXTRACT(YEAR FROM e.createdAt),e.currency " +
+			"ORDER BY month"
+			)
+	List<CurrencyWiseSpend> getMonthlySpendingByCurrency(Long userId,@Param("year") Integer year);
 	
 	/*
 	@Query("SELECT new com.expense_tracker.application.dto.MonthandCategoryDto(" +
@@ -131,6 +150,12 @@ public interface ExpenseRepository extends JpaRepository<Expenses,Long>{
 		       "AND EXTRACT(YEAR FROM e.createdAt) = :year " +
 		       "GROUP BY e.category")
 	List<TotalSpendingDto> getTotalandAverageByCategoryAndMonth(@Param("userId") Long userId, @Param("monthName") String monthName,@Param("year") Integer year,@Param("currency") String currency);
+	
+    @Query("SELECT new com.expense_tracker.application.dto.TotalSpent(SUM(e.amount), e.category) " +
+            "FROM Expenses e " +
+            "WHERE e.user.id = :userId AND e.currency = :currency " +
+            "GROUP BY e.category")
+	List<TotalSpent> getTotalSpent(@Param("userId") Long userId, @Param("currency") String currency);
 
 	@Query(value = "SELECT e.payee, " +
             "SUM(e.amount) AS totalAmount, " +
@@ -141,4 +166,36 @@ public interface ExpenseRepository extends JpaRepository<Expenses,Long>{
             "GROUP BY e.payee",
     nativeQuery = true)
 	List<Object[]> getPayeeRankings(@Param("userId") Long userId, @Param("currency") String currency);
+	
+	@Query("SELECT new com.expense_tracker.application.dto.TotalAmountSpending( " +
+		       "COALESCE(SUM(e.amount), 0), " +
+		       "COUNT(e), " +
+		       "COUNT(DISTINCT e.payee)) " +
+		       "FROM Expenses e " +
+		       "WHERE e.user.id = :userId " +
+		       "AND e.currency = :currency")
+	List<TotalAmountSpending> getTotalAmountSpent(@Param("userId") Long userId,@Param("currency") String currency);
+	
+	@Query("SELECT new com.expense_tracker.application.dto.ExpenseDto( " +
+		       "e.payee, " +
+		       "e.amount, " +
+		       "CAST(e.createdAt AS LocalDate)) " +  
+		       "FROM Expenses e " +  
+		       "WHERE e.user.id = :userId " +
+		       "AND e.currency = :currency " +
+		       "ORDER BY e.createdAt DESC")
+	List<ExpenseDto> getRecentTransactions(@Param("userId") Long userId,@Param("currency") String currency,Pageable pageable);
+	
+	@Query("SELECT new com.expense_tracker.application.dto.PayeeCountDto( " +
+		       "e.payee, COUNT(e.payee)) " +
+		       "FROM Expenses e " +
+		       "WHERE e.user.id = :userId " +
+		       "AND e.currency = :currency " +
+		       "GROUP BY e.payee " +
+		       "ORDER BY COUNT(e.payee) DESC")
+	List<PayeeCountDto> getPayeeCount(@Param("userId") Long userId, 
+		                                  @Param("currency") String currency, 
+		                                  Pageable pageable);
+
+	
 }

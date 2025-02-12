@@ -19,10 +19,15 @@ import jakarta.validation.Valid;
 
 import com.expense_tracker.application.dao.UserRepository;
 import com.expense_tracker.application.dto.CategorySpendDto;
+import com.expense_tracker.application.dto.CurrencyWiseSpend;
+import com.expense_tracker.application.dto.ExpenseDto;
 import com.expense_tracker.application.dto.MonthandCategoryDto;
 import com.expense_tracker.application.dto.MonthlySpentDto;
+import com.expense_tracker.application.dto.PayeeCountDto;
 import com.expense_tracker.application.dto.PayeeRanking;
+import com.expense_tracker.application.dto.TotalAmountSpending;
 import com.expense_tracker.application.dto.TotalSpendingDto;
+import com.expense_tracker.application.dto.TotalSpent;
 import com.expense_tracker.application.entity.Expenses;
 import com.expense_tracker.application.entity.Users;
 
@@ -139,9 +144,21 @@ public class ExpenseController {
 		if(userId==null) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		}
-        List<MonthlySpentDto> monthlySpend = expenseService.getMonthlySpendByUser(userId,year, currency);
+        List<MonthlySpentDto> monthlySpend = expenseService.getMonthlySpendByUser(userId,year,currency);
         return ResponseEntity.ok(monthlySpend);
     }
+	
+	@GetMapping("/monthly-currency-spend")
+	@PreAuthorize("isAuthenticated()")
+	public ResponseEntity<List<CurrencyWiseSpend>> getMonthlyCurrencyWiseSpend(@RequestParam Integer year){
+		String userEmail = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		Long userId = expenseService.findUserIdbyEmail(userEmail);
+		if(userId==null) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+		}
+		List<CurrencyWiseSpend> currencyWiseSpend=expenseService.getSpendingByCurrency(userId, year);
+		return ResponseEntity.ok(currencyWiseSpend);
+	}
 	
 	@GetMapping("/monthwisecategory")
 	@PreAuthorize("isAuthenticated()")
@@ -177,5 +194,53 @@ public class ExpenseController {
 		}
 		List<PayeeRanking> payeewiseranking=expenseService.getPayeeRanking(userId, currency);
 		return ResponseEntity.ok(payeewiseranking);
+	}
+	
+	@GetMapping("/getTotalAmount")
+	@PreAuthorize("isAuthenticated()")
+	public ResponseEntity<List<TotalAmountSpending>> getTotalSpentDetails(@RequestParam String currency){
+		String userEmail = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		Long userId = expenseService.findUserIdbyEmail(userEmail);
+		if(userId==null) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+		}
+		List<TotalAmountSpending> totalSpent=expenseService.getTotalAmountSpent(userId, currency);
+		return ResponseEntity.ok(totalSpent);
+	}
+	
+	@GetMapping("/getRecentTransactions")
+	@PreAuthorize("isAuthenticated()")
+	public ResponseEntity<List<ExpenseDto>> getRecentTransactions(@RequestParam String currency){
+		String userEmail = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		Long userId = expenseService.findUserIdbyEmail(userEmail);
+		if(userId==null) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+		}
+		List<ExpenseDto> recentExpenses = expenseService.getRecentTransactions(userId, currency);
+		return ResponseEntity.ok(recentExpenses);
+	}
+	
+	@GetMapping("/getTopPayees")
+	@PreAuthorize("isAuthenticated()")
+	public ResponseEntity<List<PayeeCountDto>> getPayeeCount(@RequestParam String currency){
+		String userEmail = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		Long userId = expenseService.findUserIdbyEmail(userEmail);
+		if(userId==null) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+		}
+		List<PayeeCountDto> recentExpenses = expenseService.getPayees(userId, currency);
+		return ResponseEntity.ok(recentExpenses);
+	}
+	
+	@GetMapping("/getTotalSpent")
+	@PreAuthorize("isAuthenticated()")
+	public ResponseEntity<List<TotalSpent>> getTotalAmount(@RequestParam String currency){
+		String userEmail = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		Long userId = expenseService.findUserIdbyEmail(userEmail);
+		if(userId==null) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+		}
+		List<TotalSpent> totalSpends =expenseService.getTotalSpentAmount(userId, currency);
+		return ResponseEntity.ok(totalSpends);
 	}
 }

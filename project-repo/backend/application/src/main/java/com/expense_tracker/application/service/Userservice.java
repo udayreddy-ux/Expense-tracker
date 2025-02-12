@@ -12,4 +12,6 @@ public interface Userservice {
 	String loginUser(String email,String password);
 	void handleForgotPassword(String email);
 	void resetPassword(String token,String newPassword);
+	Users getProfileDetails(String email);
+	Users updateUserProfile(String email,Users updatedUsers);
 }
