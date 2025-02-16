@@ -13,11 +13,10 @@ public class JwtUtil {
 	
     @Value("${JWT_SECRET}")
     private static String SECRET_KEY;
-    
-        
-        // Generate a secure signing key
-        private static Key getSigningKey() {
-            byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
+	
+	// Generate a secure signing key
+    private static Key getSigningKey() {
+        byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 

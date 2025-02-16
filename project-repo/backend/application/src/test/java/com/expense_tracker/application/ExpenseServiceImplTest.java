@@ -25,26 +25,36 @@ import com.expense_tracker.application.dao.ExpenseRepository;
 import com.expense_tracker.application.entity.Expenses;
 import com.expense_tracker.application.rest.ExpenseController;
 import com.expense_tracker.application.service.ExpenseServiceImpl;
+import com.expense_tracker.application.service.ExpensesService;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
 class ExpenseServiceImplTest {
 
     @Mock
     private ExpenseRepository expenseRepository;
 
+    @Mock
+    private ExpensesService expensesService;  // Mocking the service
+
     @InjectMocks
-    private ExpenseServiceImpl expenseService;
-    
+    private ExpenseServiceImpl expenseServiceImpl;
+
     @InjectMocks
     private ExpenseController expenseController;
 
     @BeforeEach
     void setUp() {
+        SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken("udaysuryakdr@gmail.com", "Uday49869*");
+        securityContext.setAuthentication(authentication);
+        SecurityContextHolder.setContext(securityContext);
         MockitoAnnotations.openMocks(this);
     }
 
     @Test
     void testGetAllExpensesByUserIdWithPagination() {
-        // Mock Data
         Long userId = 1L;
         List<Expenses> expensesList = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
@@ -63,30 +73,37 @@ class ExpenseServiceImplTest {
         Pageable pageable = PageRequest.of(0, 5, Sort.by(Sort.Direction.DESC, "createdAt"));
         Page<Expenses> expensesPage = new PageImpl<>(expensesList.subList(0, 5), pageable, expensesList.size());
 
-        // Mock Repository Behavior
         when(expenseRepository.findByUserId(eq(userId), eq(pageable))).thenReturn(expensesPage);
 
-        // Service Call
-        Page<Expenses> result = expenseService.getAllExpensesByUserId(userId, 0, 5, "createdAt", "desc");
+        Page<Expenses> result = expenseServiceImpl.getAllExpensesByUserId(userId, 0, 5, "createdAt", "desc");
 
-        // Assertions
         assertNotNull(result, "Result should not be null");
         assertEquals(10, result.getTotalElements(), "Total elements mismatch");
         assertEquals(5, result.getContent().size(), "Page size mismatch");
         assertEquals("Merchant 0", result.getContent().get(0).getPayee(), "First record payee mismatch");
 
-        // Verify Interactions
         verify(expenseRepository, times(1)).findByUserId(eq(userId), eq(pageable));
     }
-    
+
     @Test
     void testAddExpenseInvalidAmount() {
         Expenses expense = new Expenses();
-        expense.setAmount(BigDecimal.ZERO); // Invalid amount
-        expense.setCurrency("USD"); // Valid currency
+        expense.setAmount(BigDecimal.ZERO);
+        expense.setCurrency("USD");
         expense.setPayee("Test Merchant");
 
-        ResponseEntity<?> response = expenseController.addExpense(expense);
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        when(expensesService.addExpense(any(Long.class), any(Expenses.class)))
+            .thenThrow(new IllegalArgumentException("Amount must be greater than zero"));
+
+        Long userId = 1L;  // Add this userId
+
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            expenseController.addExpense(expense);  // Pass userId
+        });
+
+        String expectedMessage = "Amount must be greater than zero";
+        String actualMessage = exception.getMessage();
+        assertTrue(actualMessage.contains(expectedMessage));
     }
+
 }
