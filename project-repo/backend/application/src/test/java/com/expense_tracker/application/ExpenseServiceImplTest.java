@@ -29,7 +29,8 @@ import com.expense_tracker.application.service.ExpensesService;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-
+import org.springframework.boot.test.context.SpringBootTest;
+@SpringBootTest
 class ExpenseServiceImplTest {
 
     @Mock

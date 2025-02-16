@@ -54,7 +54,9 @@ jobs:
           npm run build
 
       - name: Run unit tests
-        run: mvn test
+        run: |
+          cd project-repo/backend/application
+          mvn test
 
       - name: Build Docker images
         run: |
