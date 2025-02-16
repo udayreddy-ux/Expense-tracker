@@ -8,4 +8,4 @@ backend/target/
 *.log
 backend/.env
 backend/src/main/resources/application.properties
-
+project-repo/backend/application/target/
