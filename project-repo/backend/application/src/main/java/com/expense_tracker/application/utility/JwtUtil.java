@@ -3,16 +3,21 @@ package com.expense_tracker.application.utility;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import java.security.Key;
 import java.util.Date;
+
+@Component
 public class JwtUtil {
 	
-	private static final String SECRET_KEY="s3cR3tKeyF0rJwtGener4t10n3cR3tKeyF0rJwtGener4t10n";
-	
-	// Generate a secure signing key
-    private static Key getSigningKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
+    @Value("${JWT_SECRET}")
+    private static String SECRET_KEY;
+    
+        
+        // Generate a secure signing key
+        private static Key getSigningKey() {
+            byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
