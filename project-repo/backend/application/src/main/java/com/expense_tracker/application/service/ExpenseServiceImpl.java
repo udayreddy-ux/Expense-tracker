@@ -29,6 +29,7 @@ import com.expense_tracker.application.dto.TotalSpendingDto;
 import com.expense_tracker.application.dto.TotalSpent;
 import com.expense_tracker.application.entity.Expenses;
 import com.expense_tracker.application.entity.Users;
+import com.expense_tracker.application.utility.OTPUtil;
 
 
 @Service
@@ -40,18 +41,33 @@ public class ExpenseServiceImpl implements ExpensesService{
 	@Autowired
 	private UserRepository userRepository;
 	
+	@Autowired
+	private OTPService otpService;
+	
+	@Autowired
+	private OTPUtil otpGenerator;
+	
+	@Autowired
+	private EmailService emailService;
+	
 	@Override
 	public Expenses addExpense(Long userId,Expenses expense) {
-		Users user=userRepository.findById(userId).orElseThrow(()->new IllegalArgumentException("User not found"));
-		expense.setUser(user);
-		return expenseRepository.save(expense);
+	    Users user = userRepository.findById(userId)
+	            .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+	    if (expense.getAmount() == null || expense.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
+	        throw new IllegalArgumentException("Amount must be greater than 0");
+	    }
+
+	    expense.setUser(user);
+	    return expenseRepository.save(expense);
 	}
 	
 	@Override
 	public Long findUserIdbyEmail(String email) {
 		Users user=userRepository.findByEmail(email);
 		if(user==null) {
-			 new IllegalArgumentException("User not found");
+			 throw new IllegalArgumentException("User not found");
 		}
 		return user.getId();
 	}
@@ -143,6 +159,7 @@ public class ExpenseServiceImpl implements ExpensesService{
 		        ))
 		        .toList();
 	}
+	
 
 	@Override
 	public List<CurrencyWiseSpend> getSpendingByCurrency(Long userId, Integer year) {
@@ -174,6 +191,18 @@ public class ExpenseServiceImpl implements ExpensesService{
 	public List<TotalSpent> getTotalSpentAmount(Long userId, String currency) {
 		// TODO Auto-generated method stub
 		return expenseRepository.getTotalSpent(userId, currency);
+	}
+	
+	public void handleProfileChanges(String email) {
+        String otp = otpGenerator.generateOtp();
+        otpService.saveOTP(email, otp);
+		emailService.sendEmail(email, "Password Reset Request",
+			    "Dear User,\n\n" +
+			    	    "You have requested to edit your personal details on your Expense Sage account.\n\n" +
+			    	    "Your OTP is: "+otp + "\n\n" +
+			    	    "Please enter this OTP within 3 attempts. If you fail to verify, you'll need to request a new OTP.\n\n" +
+			    	    "Thank you,\n" +
+			    	    "Team Expense Sage");
 	}
 	
 }

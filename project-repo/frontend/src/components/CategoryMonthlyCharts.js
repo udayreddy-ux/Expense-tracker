@@ -9,11 +9,11 @@ const CategoryMonthlyCharts = ({ expenses }) => {
   useEffect(() => {
     if (!expenses || expenses.length === 0) return;
 
-    /***  Data Processing ***/
+    //  Data Processing
     const months = Array.from(new Set(expenses.map(d => d.monthName)));
     const categories = Array.from(new Set(expenses.map(d => d.category)));
 
-    /***  Transform Data for Stacked Chart ***/
+    //  Transform Data for Stacked Chart
     const stackedData = d3.groups(expenses, d => d.monthName).map(([month, entries]) => {
       let obj = { month };
       categories.forEach(category => {
@@ -22,7 +22,7 @@ const CategoryMonthlyCharts = ({ expenses }) => {
       return obj;
     });
 
-    /***  Set Dynamic Chart Dimensions ***/
+    //  Set Dynamic Chart Dimensions 
     const containerWidth = Math.max(600, months.length * 70);
     const height = 400;
     const margin = { top: 20, right: 30, bottom: 60, left: 60 };
@@ -33,7 +33,7 @@ const CategoryMonthlyCharts = ({ expenses }) => {
 
     const colorScale = d3.scaleOrdinal(d3.schemeCategory10).domain(categories);
 
-    /***  Tooltip Setup ***/
+    //  Tooltip Setup
     const tooltip = d3.select(tooltipRef.current)
       .style("position", "absolute")
       .style("background", "#fff")
@@ -45,7 +45,7 @@ const CategoryMonthlyCharts = ({ expenses }) => {
       .style("pointer-events", "none")
       .style("z-index", "9999");
 
-    /***  Stacked Bar Chart ***/
+    // Stacked Bar Chart 
     d3.select(stackedBarChartRef.current).selectAll("*").remove();
     const barSvg = d3.select(stackedBarChartRef.current)
       .attr("width", containerWidth)
@@ -76,12 +76,12 @@ const CategoryMonthlyCharts = ({ expenses }) => {
       .on("mouseover", function (event, d) {
         d3.select(this).attr("stroke", "black").attr("stroke-width", 2);
 
-        // **Get Modal Position Instead of Page**
+        // Get Modal Position Instead of Page
         const modal = document.querySelector(".modal-dialog");
         const modalRect = modal.getBoundingClientRect();
         const rect = event.target.getBoundingClientRect();
 
-        // **Calculate Position Relative to Modal**
+        // Calculate Position Relative to Modal
         const leftPos = rect.left - modalRect.left + modal.scrollLeft + 10;
         const topPos = rect.top - modalRect.top + modal.scrollTop - 10;
 
@@ -99,7 +99,7 @@ const CategoryMonthlyCharts = ({ expenses }) => {
         tooltip.style("display", "none");
       });
 
-    /*** ✅ Heatmap ***/
+    // Heatmap
     d3.select(heatmapRef.current).selectAll("*").remove();
     const heatSvg = d3.select(heatmapRef.current)
       .attr("width", containerWidth)
@@ -121,7 +121,7 @@ const CategoryMonthlyCharts = ({ expenses }) => {
       .on("mouseover", function (event, d) {
         d3.select(this).attr("stroke", "black").attr("stroke-width", 2);
 
-        // **Tooltip for Heatmap**
+        //Tooltip for Heatmap
         const modal = document.querySelector(".modal-dialog");
         const modalRect = modal.getBoundingClientRect();
         const rect = event.target.getBoundingClientRect();

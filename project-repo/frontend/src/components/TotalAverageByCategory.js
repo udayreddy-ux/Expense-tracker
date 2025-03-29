@@ -19,7 +19,7 @@ const TotalAverageByCategory = ({ selectedCurrency, showModal, closeModal }) => 
     "July", "August", "September", "October", "November", "December"
   ];
 
-  /*** ✅ Fetch Available Years on Mount ***/
+  /*** Fetch Available Years on Mount ***/
   useEffect(() => {
     if (selectedCurrency) {
       API.get(`/expenses/years`)
@@ -32,7 +32,7 @@ const TotalAverageByCategory = ({ selectedCurrency, showModal, closeModal }) => 
     }
   }, [selectedCurrency]);
 
-  /*** ✅ Fetch Data when Month or Year Changes ***/
+  /*** Fetch Data when Month or Year Changes ***/
   useEffect(() => {
     if (selectedCurrency && selectedYear && selectedMonth) {
       setLoading(true);
@@ -56,7 +56,7 @@ const TotalAverageByCategory = ({ selectedCurrency, showModal, closeModal }) => 
     }
   }, [selectedCurrency, selectedYear, selectedMonth]);
 
-  /*** ✅ CSV Export Function ***/
+  /*** CSV Export Function ***/
   const downloadCSV = () => {
     if (!expenses || expenses.length === 0) {
       console.error("Data is empty or undefined. Cannot export.");
@@ -96,7 +96,7 @@ const TotalAverageByCategory = ({ selectedCurrency, showModal, closeModal }) => 
             <h5 className="font-style">Analyzes total spending per month for the year {selectedYear}</h5>
             
             <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "20px" }}>
-              {/* ✅ Month Dropdown */}
+              {/* Month Dropdown */}
               <Dropdown onSelect={(month) => setMonth(month)}>
                 <Dropdown.Toggle variant="info" id="dropdown-basic">
                   {selectedMonth ? selectedMonth : "Select Month"}
@@ -110,7 +110,7 @@ const TotalAverageByCategory = ({ selectedCurrency, showModal, closeModal }) => 
                 </Dropdown.Menu>
               </Dropdown>
 
-              {/* ✅ Year Dropdown */}
+              {/* Year Dropdown */}
               <Dropdown onSelect={(year) => setYear(year)} style={{ marginLeft: "20px" }}>
                 <Dropdown.Toggle variant="info" id="dropdown-basic">
                   {selectedYear ? selectedYear : "Select Year"}
@@ -125,15 +125,15 @@ const TotalAverageByCategory = ({ selectedCurrency, showModal, closeModal }) => 
               </Dropdown>
             </div>
 
-            {/* ✅ Show Loading Indicator */}
+            {/*  Show Loading Indicator */}
             {loading && <p>Loading data...</p>}
 
-            {/* ✅ Show "No Data Available" Message */}
+            {/* Show "No Data Available" Message */}
             {noData && !loading && (
               <p style={{ textAlign: "center", fontSize: "18px", color: "gray" }}>No Data Available for the selected month and year.</p>
             )}
 
-            {/* ✅ Show Charts Only If Data Exists */}
+            {/* Show Charts Only If Data Exists */}
             {!noData && !loading && <TotalAverageCharts expenses={expenses} />}
             <p style={{ fontSize: "14px", marginTop: "15px", color: "#555" }}>
               <strong>Disclaimer:</strong><br/> 

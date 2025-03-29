@@ -85,6 +85,11 @@ public class UserController {
 	@PreAuthorize("isAuthenticated()")
 	public ResponseEntity<?> updateUserProfile(@Valid @RequestBody Users user){
 		String userEmail = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		return ResponseEntity.ok(userService.updateUserProfile(userEmail, user));
+		try {
+			Users found_user=userService.updateUserProfile(userEmail,user);
+			return ResponseEntity.ok(found_user);
+		}catch (IllegalArgumentException e) {
+			return ResponseEntity.badRequest().body(e.getMessage());
+		}
 	}
 }

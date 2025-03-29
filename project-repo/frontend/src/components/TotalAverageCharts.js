@@ -18,7 +18,7 @@ const TotalAverageCharts = ({ expenses }) => {
     }));
     const categories = Array.from(new Set(expenses.map((d) => d.category)));
 
-    /*** ✅ Donut Chart Adjustments ***/
+    /*** Donut Chart Adjustments ***/
     const donWidth = 350;
     const donHeight = 350;
     const outerRadius = Math.min(donWidth, donHeight) / (categories.length === 1 ? 3 : 2);
@@ -39,7 +39,7 @@ const TotalAverageCharts = ({ expenses }) => {
     const arcHover = d3.arc().innerRadius(innerRadius).outerRadius(outerRadius + 10);
     const donData = pieGenerator(data);
 
-    /*** ✅ Tooltip Setup ***/
+    /***Tooltip Setup ***/
     const tooltip = d3
       .select(tooltipRef.current)
       .style("position", "absolute")
@@ -52,7 +52,7 @@ const TotalAverageCharts = ({ expenses }) => {
       .style("pointer-events", "none")
       .style("z-index", "9999");
 
-    /*** ✅ Draw Donut Chart ***/
+    /***Draw Donut Chart ***/
     donsvg
       .selectAll(".arc")
       .data(donData)
@@ -84,7 +84,7 @@ const TotalAverageCharts = ({ expenses }) => {
         tooltip.style("display", "none");
       });
 
-    /*** ✅ Legend Adjustment - Positioned Right Beside Donut Chart ***/
+    /*** Legend Adjustment - Positioned Right Beside Donut Chart ***/
     const legend = d3.select(legendRef.current);
     legend.selectAll("*").remove(); // Clear previous legends
     legend
@@ -103,7 +103,7 @@ const TotalAverageCharts = ({ expenses }) => {
           )}; margin-right: 10px;"></div>${expense.category}`
       );
 
-    /*** ✅ Bar Chart Adjustments ***/
+    /***Bar Chart Adjustments ***/
     const modal = document.querySelector(".modal-dialog");
     const modalWidth = modal ? modal.clientWidth : 900;
 
@@ -142,7 +142,7 @@ const TotalAverageCharts = ({ expenses }) => {
 
     barSvg.append("g").call(d3.axisLeft(yScale));
 
-    /*** ✅ Draw Bars with Hover Effects ***/
+    /*** Draw Bars with Hover Effects ***/
     barSvg
       .selectAll(".bar")
       .data(data)

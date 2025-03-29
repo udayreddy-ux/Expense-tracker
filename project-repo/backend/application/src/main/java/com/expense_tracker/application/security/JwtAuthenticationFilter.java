@@ -19,6 +19,12 @@ import jakarta.servlet.http.HttpServletResponse;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter{
 
+	
+    private final JwtUtil jwtUtil;
+
+    public JwtAuthenticationFilter(JwtUtil jwtUtil) {
+        this.jwtUtil = jwtUtil;
+    }
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
@@ -29,7 +35,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
 			try {
 				
 				// Validate the token
-				Claims claims = JwtUtil.validateToken(token);
+				Claims claims = jwtUtil.validateToken(token);
 				String email = claims.getSubject();
 				
 				//Set the user details in the SecurityContext

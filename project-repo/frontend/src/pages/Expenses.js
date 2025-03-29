@@ -117,7 +117,7 @@ const Expenses = () => {
                 } else {
                     if (expenses.length === pageSize) {
                         // New page is required
-                        setCurrentPage(totalPages);
+                        setCurrentPage(totalPages-1);
                     } else {
                         setExpenses((prev) => [...prev, response.data]);
                     }
@@ -289,25 +289,28 @@ const Expenses = () => {
 
 
             {/* Pagination */}
-            <div className="d-flex justify-content-between mt-3">
-                <Button
-                    variant="secondary"
-                    disabled={currentPage === 0}
-                    onClick={() => setCurrentPage((prev) => prev - 1)}
-                >
-                    Previous
-                </Button>
-                <span>
-                    Page {currentPage + 1} of {totalPages}
-                </span>
-                <Button
-                    variant="secondary"
-                    disabled={currentPage === totalPages - 1}
-                    onClick={() => setCurrentPage((prev) => prev + 1)}
-                >
-                    Next
-                </Button>
-            </div>
+            {totalPages > 0 && (
+                <div className="d-flex justify-content-between mt-3">
+                    <Button
+                        variant="secondary"
+                        disabled={currentPage === 0}
+                        onClick={() => setCurrentPage((prev) => prev - 1)}
+                    >
+                        Previous
+                    </Button>
+                    <span>
+                        Page {currentPage + 1} of {totalPages}
+                    </span>
+                    <Button
+                        variant="secondary"
+                        disabled={currentPage === totalPages - 1}
+                        onClick={() => setCurrentPage((prev) => prev + 1)}
+                    >
+                        Next
+                    </Button>
+                </div>
+            )}
+
 
             {/* Add/Edit Modal */}
             <Modal show={showModal} onHide={resetForm}>

@@ -3,6 +3,8 @@ package com.expense_tracker.application.entity;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -26,6 +28,7 @@ public class Expenses {
 	
 	@ManyToOne
 	@JoinColumn(name="user_id",nullable=false) //Foreign key
+	@JsonIgnore
 	private Users user;
 	
 	@Column(name="category",nullable=false)

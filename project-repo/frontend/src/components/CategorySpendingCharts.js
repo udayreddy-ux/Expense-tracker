@@ -17,7 +17,7 @@ const CategorySpendingCharts = ({ expenses }) => {
       share: expense.percentageShare,
     }));
 
-    /*** ✅ PIE CHART ***/
+    
     const pieWidth = 280;
     const pieHeight = 300;
     const pieRadius = Math.min(pieWidth, pieHeight) / 2;
@@ -40,7 +40,7 @@ const CategorySpendingCharts = ({ expenses }) => {
     const arcHover = d3.arc().innerRadius(0).outerRadius(pieRadius + 10);
     const pieData = pie(data);
 
-    /*** ✅ Tooltip Setup ***/
+    //Tooltip Setup
     const tooltip = d3.select(tooltipRef.current)
       .style("position", "absolute")
       .style("background", "#fff")
@@ -52,7 +52,7 @@ const CategorySpendingCharts = ({ expenses }) => {
       .style("pointer-events", "none")
       .style("z-index", "9999");
 
-    /*** ✅ Draw Pie Chart with Tooltip ***/
+    //Draw Pie Chart with Tooltip
     pieSvg
       .selectAll(".arc")
       .data(pieData)
@@ -102,7 +102,7 @@ const CategorySpendingCharts = ({ expenses }) => {
           )}; margin-right: 10px;"></div>${expense.category}`
       );
 
-    /*** ✅ BAR CHART - ADJUSTED WIDTH TO FIT MODAL ***/
+    //BAR CHART - ADJUSTED WIDTH TO FIT MODAL
     const modal = document.querySelector(".modal-dialog");
     const modalWidth = modal ? modal.clientWidth : 900; // Fallback width if modal is not found
   

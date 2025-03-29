@@ -76,7 +76,7 @@ const CategoryMonthlyDistribution = ({ selectedCurrency, showModal, closeModal }
               </Dropdown>
             </div>
             <CategoryMonthlyCharts expenses={expenses} />
-                        {/* ✅ Disclaimer Note */}
+                       
                         <div style={{
               marginTop: "20px",
               padding: "10px",
