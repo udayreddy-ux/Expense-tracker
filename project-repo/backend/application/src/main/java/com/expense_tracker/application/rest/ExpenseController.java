@@ -3,6 +3,7 @@ package com.expense_tracker.application.rest;
 import java.util.Collections;
 import java.util.List;
 
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
@@ -30,28 +31,36 @@ import com.expense_tracker.application.dto.TotalSpendingDto;
 import com.expense_tracker.application.dto.TotalSpent;
 import com.expense_tracker.application.entity.Expenses;
 import com.expense_tracker.application.entity.Users;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 @RestController
 @RequestMapping("/api/expenses")
 public class ExpenseController {
 	
-	@Autowired
-	private ExpensesService expenseService;
+	private final ExpensesService expenseService;
+	private final UserRepository userRepository;
 	
+	private static final Logger logger = LoggerFactory.getLogger(ExpenseController.class);
+	// Constructor Injection
 	@Autowired
-	private UserRepository userRepository;
-	
-	public ExpenseController(ExpensesService expenseService) {
+	public ExpenseController(ExpensesService expenseService, UserRepository userRepository) {
 		this.expenseService = expenseService;
+		this.userRepository = userRepository;
 	}
 
 	@PostMapping
-	public ResponseEntity<Expenses> addExpense(@Valid @RequestBody Expenses expense){
-		String userEmail = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		Long userId=expenseService.findUserIdbyEmail(userEmail);
-		
-		 Expenses createdExpense = expenseService.addExpense(userId, expense);
-		 return ResponseEntity.ok(createdExpense);
+	public ResponseEntity<?> addExpense(@Valid @RequestBody Expenses expense){
+        String userEmail = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        
+        Long userId = expenseService.findUserIdbyEmail(userEmail);
+
+        if (userId == null || userId == 0) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid User ID");
+        }
+
+        Expenses createdExpense = expenseService.addExpense(userId, expense);
+        
+        return ResponseEntity.ok(createdExpense);
 	}
 	
 	@GetMapping("/findUserIdByEmail")
@@ -65,19 +74,22 @@ public class ExpenseController {
     }
 	
 	@GetMapping("/{userId}")
-    public ResponseEntity<?> getAllExpenses(
-    		@PathVariable Long userId,
-    	    @RequestParam(defaultValue = "0") int page,
-    	    @RequestParam(defaultValue = "10") int size,
-    	    @RequestParam(defaultValue = "createdAt") String sortBy,
-    	    @RequestParam(defaultValue = "desc") String sortDirection) {
-        try {
-            Page<Expenses> expenses = expenseService.getAllExpensesByUserId(userId, page, size, sortBy, sortDirection);
-            return ResponseEntity.ok(expenses);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
-    }
+	public ResponseEntity<?> getAllExpenses(
+	        @PathVariable Long userId,
+	        @RequestParam(defaultValue = "0") int page,
+	        @RequestParam(defaultValue = "10") int size,
+	        @RequestParam(defaultValue = "createdAt") String sortBy,
+	        @RequestParam(defaultValue = "desc") String sortDirection) {
+	    try {
+	        Page<Expenses> expenses = expenseService.getAllExpensesByUserId(userId, page, size, sortBy, sortDirection);
+	        return ResponseEntity.ok(expenses);
+	    } catch (IllegalArgumentException e) {
+	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No expenses found");
+	    } catch (Exception e) {
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error fetching expenses");
+	    }
+	}
+
 	
 	@PutMapping("/{expenseId}")
 	public ResponseEntity<Expenses> updateExpenses(@Valid @PathVariable Long expenseId,@RequestBody Expenses updatedExpense){
@@ -110,6 +122,7 @@ public class ExpenseController {
 		}
 		List<CategorySpendDto> spendingData = expenseService.getCategoryWiseSpending(userId,currency);
         return ResponseEntity.ok(spendingData);
+        
     }
 	
 	@GetMapping("/years")
@@ -243,4 +256,6 @@ public class ExpenseController {
 		List<TotalSpent> totalSpends =expenseService.getTotalSpentAmount(userId, currency);
 		return ResponseEntity.ok(totalSpends);
 	}
+	
+	
 }

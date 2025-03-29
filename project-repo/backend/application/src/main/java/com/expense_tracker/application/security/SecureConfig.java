@@ -39,7 +39,7 @@ public class SecureConfig {
             				 "/api/users/login",
             				 "/api/users/forgot-password",
             				 "/api/users/reset-password").permitAll() // Public endpoints
-            .requestMatchers("/api/expenses").authenticated()
+            .requestMatchers("/api/expenses","/api/auth").authenticated()
             .anyRequest().authenticated()// Protect other endpoints
         )
         .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

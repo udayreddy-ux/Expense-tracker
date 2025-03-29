@@ -40,4 +40,5 @@ public interface ExpensesService {
 	List<ExpenseDto> getRecentTransactions(Long userId,String currency);
 	List<PayeeCountDto> getPayees(Long userId,String currency);
 	List<TotalSpent> getTotalSpentAmount(Long userId,String currency);
+	void handleProfileChanges(String email);
 }

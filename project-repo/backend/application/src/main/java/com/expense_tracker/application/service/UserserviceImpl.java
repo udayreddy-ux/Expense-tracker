@@ -18,6 +18,8 @@ public class UserserviceImpl implements Userservice{
 	private EmailService emailService;
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
+	@Autowired
+	private JwtUtil jwtUtil;
 	
 	@Autowired
 	public UserserviceImpl(UserRepository userRepository,EmailService emailService) {
@@ -51,7 +53,7 @@ public class UserserviceImpl implements Userservice{
 	        throw new IllegalArgumentException("Invalid password");
 	    }
 
-	    return JwtUtil.generateToken(email);
+	    return jwtUtil.generateToken(email);
 
 	}
 	
@@ -62,7 +64,7 @@ public class UserserviceImpl implements Userservice{
 		}
 		
 		//Generate JWT token
-		String token = JwtUtil.generateToken(email);
+		String token = jwtUtil.generateToken(email);
 		
 		//Send email
 		String resetLink="http://localhost:3000/reset-password?token="+token;
@@ -76,7 +78,7 @@ public class UserserviceImpl implements Userservice{
 	}
 	
 	public void resetPassword(String token,String newPassword) {
-		Claims claims=JwtUtil.validateToken(token);
+		Claims claims=jwtUtil.validateToken(token);
 		String email=claims.getSubject();
 		
 		Users user=userRepository.findByEmail(email);
@@ -98,8 +100,13 @@ public class UserserviceImpl implements Userservice{
 	
 	public Users updateUserProfile(String email, Users updatedUser) {
 		Users user=userRepository.findByEmail(email);
+		String updateuser_email=updatedUser.getEmail();
+		Users updated_user_details=userRepository.findByEmail(updateuser_email);
 		if(user==null) {
 			throw new IllegalArgumentException("User not found");
+		}
+		if((userRepository.findByEmail(updatedUser.getEmail()) != null) && !updated_user_details.getId().equals(user.getId())) {
+			throw new IllegalArgumentException("Email already in use");
 		}
 		user.setEmail(updatedUser.getEmail());
 		user.setFirst_name(updatedUser.getFirst_name());

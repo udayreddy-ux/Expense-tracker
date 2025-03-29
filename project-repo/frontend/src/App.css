@@ -43,12 +43,16 @@
 
 .bg-gradient-custom {
   background: linear-gradient(to bottom, #c4dbdb, #88bdce, #c4dbdb);
-  height: auto; /* Full-screen height */
-  width: 100%;   /* Full-screen width */
-  display: flex; /* Enable flexbox for centering */
+  min-height: 100vh; /* Ensures full viewport height */
+  width: 100%; /* Ensures full viewport width */
+  display: flex; /* Enables flexbox */
+  flex-direction: column;
   justify-content: center; /* Center horizontally */
   align-items: center; /* Center vertically */
+  margin: 0;
+  padding-bottom: 50px; /* Ensures content spacing */
 }
+
 
 .login-card{
   display: flex;

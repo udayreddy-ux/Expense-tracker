@@ -24,7 +24,7 @@ const PayeeRankCharts = ({ expenses }) => {
     const modal = document.querySelector(".modal-dialog");
     const modalWidth = modal ? modal.clientWidth : 900;
 
-    /*** ✅ Tooltip Setup ***/
+    //
     d3.select(tooltipRef.current).selectAll("*").remove();
     const tooltip = d3.select(tooltipRef.current)
       .style("position", "absolute")
@@ -37,7 +37,7 @@ const PayeeRankCharts = ({ expenses }) => {
       .style("pointer-events", "none")
       .style("z-index", "9999");
 
-    /*** ✅ Horizontal Bar Chart ***/
+    //
     const barWidth = Math.min(modalWidth - 200, Math.max(payees.length * 90, 200));
     const barHeight = 400;
     const margin = { top: 20, right: 30, bottom: 70, left: 100 };
