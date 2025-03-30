@@ -70,19 +70,19 @@ const Profile = () => {
         API.get(`/users/Profile`)
             .then((response) => {
                 console.log("Backend Response:", response.data);
-                setUser(response.data || {});
+                //setUser(response.data || {});
                 setFormData({
                     first_name: response.data.first_name || "",
                     last_name: response.data.last_name || "",
                     email: response.data.email || "",
                     mobile: response.data.mobile || "",
                 });
-                updateUser({
-                    first_name: response.data.first_name || "",
-                    last_name: response.data.last_name || "",
-                    email: response.data.email || "",
-                    mobile: response.data.mobile || "",
-                });
+                //updateUser({
+                //    first_name: response.data.first_name || "",
+                //    last_name: response.data.last_name || "",
+                //    email: response.data.email || "",
+                //    mobile: response.data.mobile || "",
+                //});
                 setShowConfirm(false);
             })
             .catch((error) => console.error("Error fetching User details", error));
@@ -150,7 +150,7 @@ const Profile = () => {
     }
 
     const handlePhoneChange = (value) => {
-        setPhone(value);
+        //setPhone(value);
         setFormData((previousFormData)=>({
             ...previousFormData,
             mobile: value.startsWith("+") ? value : `+${value}`,
