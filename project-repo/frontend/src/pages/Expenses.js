@@ -100,33 +100,37 @@ const Expenses = () => {
     };
 
     const handleSaveExpense = () => {
-        if (!newExpense.category || !newExpense.payee || !newExpense.amount || !newExpense.currency) {
-            alert('Please fill in all required fields.');
-            return;
-        }
+    if (!newExpense.category || !newExpense.payee || !newExpense.amount || !newExpense.currency) {
+        alert('Please fill in all required fields.');
+        return;
+    }
 
-        const saveRequest = isModifyMode
-            ? API.put(`/expenses/${expenseToModify.id}`,newExpense)
-            : API.post('/expenses',newExpense);
-        saveRequest
-            .then((response)=>{
-                if (isModifyMode) {
-                    setExpenses((prev) =>
-                        prev.map((exp) => (exp.id === expenseToModify.id ? response.data : exp))
-                    );
+    const saveRequest = isModifyMode
+        ? API.put(`/expenses/${expenseToModify.id}`, newExpense)
+        : API.post('/expenses', newExpense);
+
+    saveRequest
+        .then((response) => {
+            resetForm();
+
+            if (isModifyMode) {
+                fetchExpenses(); // just refresh the current page
+            } else {
+                // If the page is full, go to next page, else stay on current and reload
+                const isLastPage = currentPage === totalPages - 1;
+                const willOverflow = expenses.length >= pageSize;
+
+                if (isLastPage && willOverflow) {
+                    // Temporarily go to next page, then fetch data
+                    setCurrentPage(prev => prev + 1);
                 } else {
-                    if (expenses.length === pageSize) {
-                        // New page is required
-                        setCurrentPage(totalPages);
-                    } else {
-                        setExpenses((prev) => [...prev, response.data]);
-                    }
+                    fetchExpenses(); // No pagination change, just refresh
                 }
-                resetForm();
-            })
-            .catch((error) => console.error('Error saving expense:', error));
-            
-    };
+            }
+        })
+        .catch((error) => console.error('Error saving expense:', error));
+};
+
 
     const resetForm = () => {
         setNewExpense({ category: '', payee: '', amount: '', currency: '', description: '' });
@@ -298,7 +302,7 @@ const Expenses = () => {
                     Previous
                 </Button>
                 <span>
-                    Page {currentPage + 1} of {totalPages}
+                    Page {Math.min(currentPage + 1, totalPages)} of {totalPages}
                 </span>
                 <Button
                     variant="secondary"
