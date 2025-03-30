@@ -77,7 +77,7 @@ const Expenses = () => {
 
     useEffect(() => {
         if (userId) fetchExpenses();
-    }, [userId, currentPage, sortField, sortDirection]);
+    }, [userId, currentPage, sortField, sortDirection,fetchExpenses]);
 
     const fetchExpenses = () => {
         API.get(`/expenses/${userId}`, {

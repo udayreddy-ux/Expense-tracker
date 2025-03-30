@@ -7,7 +7,7 @@ import 'react-phone-input-2/lib/style.css';
 
 const SignUp = () => {
     const navigate = useNavigate();
-    const [phone, setPhone] = useState('');
+    //const [phone, setPhone] = useState('');
     const [isChecked, setIsChecked] = useState(false); // State for checkbox
 
     const goToAboutPage = () => {
@@ -69,7 +69,7 @@ const SignUp = () => {
     };
 
     const handlePhoneChange = (value) => {
-        setPhone(value);
+        //setPhone(value);
         setFormData((prevFormData) => ({
             ...prevFormData,
             mobile: value.startsWith("+") ? value : `+${value}`,
