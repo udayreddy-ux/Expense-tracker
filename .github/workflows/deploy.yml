@@ -66,7 +66,7 @@ jobs:
       - name: Install and build frontend
         run: |
           cd project-repo/frontend
-          echo "REACT_APP_API_BASE_URL=${{ secrets.REACT_APP_API_BASE_URL }}" > project-repo/frontend/.env
+          echo "REACT_APP_API_BASE_URL=${{ secrets.REACT_APP_API_BASE_URL }}" > ./project-repo/frontend/.env
           npm install
           CI='' npm run build
 
