@@ -100,28 +100,21 @@ const Expenses = () => {
     };
 
     const handleSaveExpense = () => {
-    if (!newExpense.category || !newExpense.payee || !newExpense.amount || !newExpense.currency) {
-        alert('Please fill in all required fields.');
-        return;
-    }
-
-    const saveRequest = isModifyMode
-        ? API.put(`/expenses/${expenseToModify.id}`, newExpense)
-        : API.post('/expenses', newExpense);
-
-    saveRequest
-        .then((response) => {
-            if (isModifyMode) {
-                setExpenses((prev) =>
-                    prev.map((exp) => (exp.id === expenseToModify.id ? response.data : exp))
-                );
-            } else {
-                // Always refresh expenses after adding new one
-                fetchExpenses();
-            }
-            resetForm();
-        })
-        .catch((error) => console.error('Error saving expense:', error));
+        if (!newExpense.category || !newExpense.payee || !newExpense.amount || !newExpense.currency) {
+            alert('Please fill in all required fields.');
+            return;
+        }
+    
+        const saveRequest = isModifyMode
+            ? API.put(`/expenses/${expenseToModify.id}`, newExpense)
+            : API.post('/expenses', newExpense);
+    
+        saveRequest
+            .then(() => {
+                fetchExpenses(); // Fetch expenses after saving
+                resetForm();
+            })
+            .catch((error) => console.error('Error saving expense:', error));
     };
 
 
@@ -153,19 +146,15 @@ const Expenses = () => {
     const confirmDeleteExpenses = () => {
         API.delete('/expenses', { data: selectedExpenses })
             .then(() => {
-                setExpenses((prev) => prev.filter((exp) => !selectedExpenses.includes(exp.id)));
+                if (expenses.length === selectedExpenses.length && currentPage > 0) {
+                    setCurrentPage((prev) => prev - 1);
+                }
+                fetchExpenses();
                 setSelectedExpenses([]);
-                if(expenses.length===selectedExpenses.length && currentPage>0){
-                    setCurrentPage((prev)=>prev-1);
-                }
-                else{
-                    fetchExpenses();
-                }
                 setShowConfirm(false);
             })
             .catch((error) => console.error('Error deleting expenses:', error));
     };
-
     const handleModifyExpense = (id) => {
         const expense = expenses.find((exp) => exp.id === id);
         setExpenseToModify(expense);
