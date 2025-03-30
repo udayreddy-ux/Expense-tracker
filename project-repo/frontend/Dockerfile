@@ -6,12 +6,13 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 
+COPY . .
+
 # Build-time argument
 ARG REACT_APP_API_BASE_URL
-RUN echo "REACT_APP_API_BASE_URL=$REACT_APP_API_BASE_URL" > .env
 
-COPY . .
-RUN npm run build
+# Build the app with the environment variable directly set.
+RUN REACT_APP_API_BASE_URL=$REACT_APP_API_BASE_URL npm run build
 
 # Stage 2: Serve with NGINX
 FROM nginx:alpine
