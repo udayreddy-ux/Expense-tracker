@@ -52,17 +52,17 @@ jobs:
 
       - name: Build backend
         run: |
-          cd backend/application
+          cd project-repo/backend/application
           ./mvnw clean install
 
       - name: Run backend tests
         run: |
-          cd backend/application
+          cd project-repo/backend/application
           ./mvnw test
 
       - name: Install and build frontend
         run: |
-          cd frontend
+          cd project-repo/frontend
           echo "REACT_APP_API_BASE_URL=${{ secrets.REACT_APP_API_BASE_URL }}" > .env
           npm install
           npm run build
