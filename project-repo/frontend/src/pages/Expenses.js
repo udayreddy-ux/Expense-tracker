@@ -100,33 +100,30 @@ const Expenses = () => {
     };
 
     const handleSaveExpense = () => {
-        if (!newExpense.category || !newExpense.payee || !newExpense.amount || !newExpense.currency) {
-            alert('Please fill in all required fields.');
-            return;
-        }
+    if (!newExpense.category || !newExpense.payee || !newExpense.amount || !newExpense.currency) {
+        alert('Please fill in all required fields.');
+        return;
+    }
 
-        const saveRequest = isModifyMode
-            ? API.put(`/expenses/${expenseToModify.id}`,newExpense)
-            : API.post('/expenses',newExpense);
-        saveRequest
-            .then((response)=>{
-                if (isModifyMode) {
-                    setExpenses((prev) =>
-                        prev.map((exp) => (exp.id === expenseToModify.id ? response.data : exp))
-                    );
-                } else {
-                    if (expenses.length === pageSize) {
-                        // New page is required
-                        setCurrentPage(totalPages);
-                    } else {
-                        setExpenses((prev) => [...prev, response.data]);
-                    }
-                }
-                resetForm();
-            })
-            .catch((error) => console.error('Error saving expense:', error));
-            
+    const saveRequest = isModifyMode
+        ? API.put(`/expenses/${expenseToModify.id}`, newExpense)
+        : API.post('/expenses', newExpense);
+
+    saveRequest
+        .then((response) => {
+            if (isModifyMode) {
+                setExpenses((prev) =>
+                    prev.map((exp) => (exp.id === expenseToModify.id ? response.data : exp))
+                );
+            } else {
+                // Always refresh expenses after adding new one
+                fetchExpenses();
+            }
+            resetForm();
+        })
+        .catch((error) => console.error('Error saving expense:', error));
     };
+
 
     const resetForm = () => {
         setNewExpense({ category: '', payee: '', amount: '', currency: '', description: '' });
@@ -298,11 +295,11 @@ const Expenses = () => {
                     Previous
                 </Button>
                 <span>
-                    Page {currentPage + 1} of {totalPages}
+                    Page {Math.min(currentPage + 1, totalPages)} of {totalPages}
                 </span>
                 <Button
                     variant="secondary"
-                    disabled={currentPage === totalPages - 1}
+                    disabled={currentPage >= totalPages - 1}
                     onClick={() => setCurrentPage((prev) => prev + 1)}
                 >
                     Next
