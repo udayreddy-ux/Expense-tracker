@@ -12,7 +12,7 @@ const MonthlySpendingCharts = ({ expenses, currencies }) => {
     if(!currencies || currencies.length === 0) return;
     
     const months = Array.from(new Set(expenses.map(d => d.monthName)));
-    const categories = Array.from(new Set(expenses.map(d => d.category)));
+    //const categories = Array.from(new Set(expenses.map(d => d.category)));
 
     const TotalCurrencies = Array.from(new Set(currencies.map(d=> d.currency)));
     const expMonths = Array.from(new Set(currencies.map(d => d.monthName)));
