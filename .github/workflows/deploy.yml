@@ -45,7 +45,7 @@ jobs:
         uses: actions/checkout@v3
         
       - name: Make mvnw executable
-        run: chmod +x backend/application/mvnw
+        run: chmod +x project-repo/backend/application/mvnw
         
       - name: Set up JDK 21
         uses: actions/setup-java@v3
