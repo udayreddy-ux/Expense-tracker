@@ -93,5 +93,9 @@ jobs:
 
       - name: Build and push frontend Docker image
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/expense-sage-app-frontend:latest project-repo/frontend
+          docker build \
+            --build-arg REACT_APP_API_BASE_URL=${{ secrets.REACT_APP_API_BASE_URL }} \
+            -t ${{ secrets.DOCKER_USERNAME }}/expense-sage-app-frontend:latest \
+            project-repo/frontend
+
           docker push ${{ secrets.DOCKER_USERNAME }}/expense-sage-app-frontend:latest
