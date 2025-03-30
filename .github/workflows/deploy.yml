@@ -66,6 +66,7 @@ jobs:
       - name: Install and build frontend
         run: |
           cd project-repo/frontend
+          npm install
           CI='' REACT_APP_API_BASE_URL=${{ secrets.REACT_APP_API_BASE_URL }} npm run build
 
   docker-build: # Correct indentation here
