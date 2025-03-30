@@ -81,7 +81,7 @@ const Expenses = () => {
 
     const fetchExpenses = () => {
         API.get(`/expenses/${userId}`, {
-            params: { page: currentPage, size: pageSize, sortBy: sortField, sortDirection },
+            params: { page: currentPage, size: pageSize, sortBy: sortField, sortDirection: sortDirection },
         })
             .then((response) => {
                 setExpenses(response.data.content || []);
