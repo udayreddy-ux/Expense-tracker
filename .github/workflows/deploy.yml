@@ -86,10 +86,10 @@ jobs:
 
       - name: Build and push backend Docker image
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/expense-sage-app-backend:latest ./backend
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/expense-sage-app-backend:latest project-repo/backend/application
           docker push ${{ secrets.DOCKER_USERNAME }}/expense-sage-app-backend:latest
 
       - name: Build and push frontend Docker image
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/expense-sage-app-frontend:latest ./frontend
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/expense-sage-app-frontend:latest project-repo/frontend
           docker push ${{ secrets.DOCKER_USERNAME }}/expense-sage-app-frontend:latest
