@@ -3,7 +3,7 @@ import * as d3 from "d3";
 
 const PayeeRankCharts = ({ expenses }) => {
   const horBarChart = useRef(null);
-  //const heatMap = useRef(null);
+  const heatMap = useRef(null);
   const tooltipRef = useRef(null);
   const containerRef = useRef(null);
 
@@ -18,7 +18,7 @@ const PayeeRankCharts = ({ expenses }) => {
     }));
 
     const payees = Array.from(new Set(expenses.map((d) => d.payee)));
-    //const ranks = Array.from(new Set(expenses.map((d) => d.payeeRank))).sort((a, b) => a - b);
+    const ranks = Array.from(new Set(expenses.map((d) => d.payeeRank))).sort((a, b) => a - b);
 
     const colorScale = d3.scaleOrdinal(d3.schemeCategory10).domain(payees);
     const modal = document.querySelector(".modal-dialog");

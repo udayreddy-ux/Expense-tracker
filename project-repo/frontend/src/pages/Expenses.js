@@ -3,7 +3,7 @@ import API from '../api';
 import { jwtDecode } from 'jwt-decode';
 import { Modal, Button, Table, Form, Dropdown } from 'react-bootstrap';
 import { FaPlus, FaSort, FaTrash, FaEdit } from 'react-icons/fa';
-import { useCallback } from 'react';
+
 const Expenses = () => {
     const [expenses, setExpenses] = useState([]);
     const [selectedExpenses, setSelectedExpenses] = useState([]);
@@ -59,7 +59,7 @@ const Expenses = () => {
     };
 
     // Fetch `userId` using email
-    const fetchUserId = useCallback(async () => {
+    const fetchUserId = async () => {
         const email = getEmailFromToken();
         if (!email) return;
 
@@ -69,12 +69,17 @@ const Expenses = () => {
         } catch (error) {
             console.error('Error fetching userId:', error);
         }
+    };
+
+    useEffect(() => {
+        fetchUserId();
     }, []);
 
-    // Fetch Expenses
-    const fetchExpenses = useCallback(() => {
-        if (!userId) return;
-    
+    useEffect(() => {
+        if (userId) fetchExpenses();
+    }, [userId, currentPage, sortField, sortDirection]);
+
+    const fetchExpenses = () => {
         API.get(`/expenses/${userId}`, {
             params: { page: currentPage, size: pageSize, sortBy: sortField, sortDirection },
         })
@@ -83,17 +88,7 @@ const Expenses = () => {
                 setTotalPages(response.data.totalPages);
             })
             .catch((error) => console.error('Error fetching expenses:', error));
-        }, [userId, currentPage, sortField, sortDirection]);
-
-    useEffect(() => {
-        fetchUserId();
-    }, [fetchUserId]);
-
-    useEffect(() => {
-        if (userId) fetchExpenses();
-    }, [userId, currentPage, sortField, sortDirection,fetchExpenses]);
-
-
+    };
 
     const handleModalToggle = () => setShowModal(!showModal);
 
@@ -122,7 +117,7 @@ const Expenses = () => {
                 } else {
                     if (expenses.length === pageSize) {
                         // New page is required
-                        setCurrentPage(totalPages-1);
+                        setCurrentPage(totalPages);
                     } else {
                         setExpenses((prev) => [...prev, response.data]);
                     }
@@ -294,28 +289,25 @@ const Expenses = () => {
 
 
             {/* Pagination */}
-            {totalPages > 0 && (
-                <div className="d-flex justify-content-between mt-3">
-                    <Button
-                        variant="secondary"
-                        disabled={currentPage === 0}
-                        onClick={() => setCurrentPage((prev) => prev - 1)}
-                    >
-                        Previous
-                    </Button>
-                    <span>
-                        Page {currentPage + 1} of {totalPages}
-                    </span>
-                    <Button
-                        variant="secondary"
-                        disabled={currentPage === totalPages - 1}
-                        onClick={() => setCurrentPage((prev) => prev + 1)}
-                    >
-                        Next
-                    </Button>
-                </div>
-            )}
-
+            <div className="d-flex justify-content-between mt-3">
+                <Button
+                    variant="secondary"
+                    disabled={currentPage === 0}
+                    onClick={() => setCurrentPage((prev) => prev - 1)}
+                >
+                    Previous
+                </Button>
+                <span>
+                    Page {currentPage + 1} of {totalPages}
+                </span>
+                <Button
+                    variant="secondary"
+                    disabled={currentPage === totalPages - 1}
+                    onClick={() => setCurrentPage((prev) => prev + 1)}
+                >
+                    Next
+                </Button>
+            </div>
 
             {/* Add/Edit Modal */}
             <Modal show={showModal} onHide={resetForm}>

@@ -3,7 +3,7 @@ version: '3.8'
 services:
   
   backend:
-    image: uday830/expense-sage-backend:latest
+    image: uday830/expense-sage-app-backend:latest
     ports:
       - "8080:8080"
     env_file:
@@ -17,7 +17,7 @@ services:
     networks:
       - app-network
   frontend:
-    image: uday830/expense-sage-frontend:latest
+    image: uday830/expense-sage-app-frontend:latest
     ports:
       - "3000:80"
     depends_on:

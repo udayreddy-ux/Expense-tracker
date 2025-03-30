@@ -1,21 +1,23 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../api";
+import BASE_URL from "../config";
 import { useAuth } from "../components/AuthContext";
-import { Modal, Button} from "react-bootstrap";
+import axios from "axios";
+import { Modal, Button,Form } from "react-bootstrap";
 import OtpInput from "react-otp-input";
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 
 const Profile = () => {
-    const {logout}=useAuth();
+    const {isAuthenticated, logout}=useAuth();
     const navigate=useNavigate();
-    //const [user, setUser] = useState({});
+    const [user, setUser] = useState({});
     const [errors,setErrors]=useState({});
     const [showConfirm,setShowConfirm]=useState(false);
     const [otp,setOtp]=useState('');
     const [showOtp,setOtpModal]=useState(false);
-    //const [phone, setPhone] = useState('');
+    const [phone, setPhone] = useState('');
     
     const [formData, setFormData] = useState({
         first_name: "",
@@ -24,12 +26,12 @@ const Profile = () => {
         mobile: "",
     });
 
-    //const [updatedUser,updateUser]=useState({
-    //    first_name: "",
-    //    last_name: "",
-    //    email: "",
-    //    mobile: "",
-    //});
+    const [updatedUser,updateUser]=useState({
+        first_name: "",
+        last_name: "",
+        email: "",
+        mobile: "",
+    });
 
     const validateForm = () => {
         const newErrors = {};
@@ -70,19 +72,19 @@ const Profile = () => {
         API.get(`/users/Profile`)
             .then((response) => {
                 console.log("Backend Response:", response.data);
-                //setUser(response.data || {});
+                setUser(response.data || {});
                 setFormData({
                     first_name: response.data.first_name || "",
                     last_name: response.data.last_name || "",
                     email: response.data.email || "",
                     mobile: response.data.mobile || "",
                 });
-                //updateUser({
-                //    first_name: response.data.first_name || "",
-                //    last_name: response.data.last_name || "",
-                //    email: response.data.email || "",
-                //    mobile: response.data.mobile || "",
-                //});
+                updateUser({
+                    first_name: response.data.first_name || "",
+                    last_name: response.data.last_name || "",
+                    email: response.data.email || "",
+                    mobile: response.data.mobile || "",
+                });
                 setShowConfirm(false);
             })
             .catch((error) => console.error("Error fetching User details", error));
@@ -93,7 +95,7 @@ const Profile = () => {
         if(validateForm()){
             try
             {
-                await API.put(`users/updateProfile`,formData)
+                const response = await API.put(`users/updateProfile`,formData)
                 alert("Profile update sucessfully, please login again with valid credentials");
                 logout();
                 setShowConfirm(false);
@@ -150,7 +152,7 @@ const Profile = () => {
     }
 
     const handlePhoneChange = (value) => {
-        //setPhone(value);
+        setPhone(value);
         setFormData((previousFormData)=>({
             ...previousFormData,
             mobile: value.startsWith("+") ? value : `+${value}`,
@@ -215,6 +217,24 @@ const Profile = () => {
                                 //containerStyle={{ width: "110px" }}
                                 inputStyle={{ width: "100%" }}
                             />
+                            {/*
+                        <div style={{display:"flex",alignItems:"center",gap:"5px"}}>
+                            <PhoneInput
+                                country={'us'} 
+                                value={phone}
+                                onChange={(phone) => setPhone(phone)}
+                                containerStyle={{ width: "110px" }}
+                                inputStyle={{ width: "100%" }}
+                            />
+                             <input
+                                type="text"
+                                className={`form-control ${errors.mobile ? "is-invalid" : ""} `}
+                                id="mobile"
+                                name="mobile"
+                                value={formData.mobile}
+                                onChange={handleChange}
+                            />
+                        </div>*/}
                         {errors.mobile && <div className="invalid-feedback">{errors.mobile}</div>}
                     </div>
 
