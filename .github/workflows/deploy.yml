@@ -69,6 +69,8 @@ jobs:
           echo "REACT_APP_API_BASE_URL=${{ secrets.REACT_APP_API_BASE_URL }}" > .env
           npm install
           CI='' npm run build
+        env:
+          REACT_APP_API_BASE_URL: ${{ secrets.REACT_APP_API_BASE_URL}}
 
   docker-build:
     needs: build-and-test
