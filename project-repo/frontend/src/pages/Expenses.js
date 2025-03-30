@@ -71,18 +71,10 @@ const Expenses = () => {
         }
     }, []);
 
-    useEffect(() => {
-        fetchUserId();
-    }, [fetchUserId]);
-
-    useEffect(() => {
-        if (userId) fetchExpenses();
-    }, [userId, currentPage, sortField, sortDirection,fetchExpenses]);
-
-     // Fetch Expenses
-     const fetchExpenses = useCallback(() => {
+    // Fetch Expenses
+    const fetchExpenses = useCallback(() => {
         if (!userId) return;
-
+    
         API.get(`/expenses/${userId}`, {
             params: { page: currentPage, size: pageSize, sortBy: sortField, sortDirection },
         })
@@ -91,7 +83,17 @@ const Expenses = () => {
                 setTotalPages(response.data.totalPages);
             })
             .catch((error) => console.error('Error fetching expenses:', error));
-    }, [userId, currentPage, sortField, sortDirection]);
+        }, [userId, currentPage, sortField, sortDirection]);
+
+    useEffect(() => {
+        fetchUserId();
+    }, [fetchUserId]);
+
+    useEffect(() => {
+        if (userId) fetchExpenses();
+    }, [userId, currentPage, sortField, sortDirection,fetchExpenses]);
+
+
 
     const handleModalToggle = () => setShowModal(!showModal);
 
