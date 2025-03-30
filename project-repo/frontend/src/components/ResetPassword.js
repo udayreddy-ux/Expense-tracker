@@ -20,7 +20,7 @@ const ResetPassword=({showForgotPassword,onClose})=>{
             newErrors.email="Invalid email format.";
         }
         setErrors(newErrors);
-        return Object.keys(newErrors).length==0;
+        return Object.keys(newErrors).length===0;
     };
 
     const handleChange=(e)=>{

@@ -39,12 +39,12 @@ const MonthlySpendingCharts = ({ expenses, currencies }) => {
       return acc;
     }, []);
 
-    /*** ✅ Set Dynamic Chart Dimensions ***/
+    /*** Set Dynamic Chart Dimensions ***/
     const containerWidth = Math.max(550, months.length * 60);
     const containerHeight = 400;
     const margin = { top: 20, right: 30, bottom: 60, left: 60 };
 
-    /*** ✅ Create Tooltip ***/
+    /*** Create Tooltip ***/
     const tooltip = d3.select(tooltipRef.current)
       .style("position", "absolute")
       .style("background", "#fff")
@@ -58,7 +58,7 @@ const MonthlySpendingCharts = ({ expenses, currencies }) => {
       .style("font-size", "14px")
       .style("font-weight", "bold");
 
-    /*** ✅ Define X & Y Scales ***/
+    /*** Define X & Y Scales ***/
     const xScale = d3.scaleBand()
       .domain(months)
       .range([0, containerWidth - margin.left - margin.right])
@@ -69,12 +69,12 @@ const MonthlySpendingCharts = ({ expenses, currencies }) => {
       .nice()
       .range([containerHeight - margin.top - margin.bottom, 0]);
 
-    const colorScale = d3.scaleOrdinal(d3.schemeCategory10).domain(categories);
+    //const colorScale = d3.scaleOrdinal(d3.schemeCategory10).domain(categories);
 
-    /*** ✅ Clear Old Charts ***/
+    /***  Clear Old Charts ***/
     d3.select(lineChartRef.current).selectAll("*").remove();
 
-    /*** ✅ Line Chart ***/
+    /***  Line Chart ***/
     const lineSvg = d3.select(lineChartRef.current)
       .attr("width", containerWidth)
       .attr("height", containerHeight)
@@ -138,7 +138,7 @@ const MonthlySpendingCharts = ({ expenses, currencies }) => {
   });
 
 
-    /*** ✅ Stacked Bar Chart ***/
+    /*** Stacked Bar Chart ***/
 
     const stackxScale = d3.scaleBand().domain(TotalCurrencies).range([0, containerWidth - margin.left - margin.right]).padding(0.3);
     const stackyScale = d3.scaleLinear().domain([0,d3.max(stackedData,d=>d3.sum(expMonths, key => d[key]))]).nice()

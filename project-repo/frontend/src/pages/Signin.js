@@ -34,7 +34,7 @@ const SignIn = () =>{
             newErrors.password="Password is required.";
         }
         setErrors(newErrors);
-        return Object.keys(newErrors).length==0;
+        return Object.keys(newErrors).length===0;
     };
 
     const handleSubmit = async (e) => {
@@ -106,7 +106,7 @@ const SignIn = () =>{
             Don't have an account? <a href="/signup">Sign up</a>
           </p>
           <p className="mt-3 text-center">
-            <a href="#" onClick={handleOpenForgotPassword}>Forgot password</a>
+            <button type="button" className="btn-link" onClick={handleOpenForgotPassword}>Forgot password</button>
           </p>
           <p>
             {showForgotPassword && <ResetPassword showForgotPassword={showForgotPassword} onClose={handleCloseForgotPassword}/>}
