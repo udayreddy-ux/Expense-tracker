@@ -3,7 +3,7 @@ import API from '../api';
 import { jwtDecode } from 'jwt-decode';
 import { Modal, Button, Table, Form, Dropdown } from 'react-bootstrap';
 import { FaPlus, FaSort, FaTrash, FaEdit } from 'react-icons/fa';
-
+import { useCallback } from 'react';
 const Expenses = () => {
     const [expenses, setExpenses] = useState([]);
     const [selectedExpenses, setSelectedExpenses] = useState([]);
@@ -59,7 +59,7 @@ const Expenses = () => {
     };
 
     // Fetch `userId` using email
-    const fetchUserId = async () => {
+    const fetchUserId = useCallback(async () => {
         const email = getEmailFromToken();
         if (!email) return;
 
@@ -69,17 +69,20 @@ const Expenses = () => {
         } catch (error) {
             console.error('Error fetching userId:', error);
         }
-    };
+    }, []);
 
     useEffect(() => {
         fetchUserId();
-    }, []);
+    }, [fetchUserId]);
 
     useEffect(() => {
         if (userId) fetchExpenses();
     }, [userId, currentPage, sortField, sortDirection,fetchExpenses]);
 
-    const fetchExpenses = () => {
+     // Fetch Expenses
+     const fetchExpenses = useCallback(() => {
+        if (!userId) return;
+
         API.get(`/expenses/${userId}`, {
             params: { page: currentPage, size: pageSize, sortBy: sortField, sortDirection },
         })
@@ -88,7 +91,7 @@ const Expenses = () => {
                 setTotalPages(response.data.totalPages);
             })
             .catch((error) => console.error('Error fetching expenses:', error));
-    };
+    }, [userId, currentPage, sortField, sortDirection]);
 
     const handleModalToggle = () => setShowModal(!showModal);
 
