@@ -99,37 +99,41 @@ const Expenses = () => {
         setNewExpense((prev) => ({ ...prev, [name]: value }));
     };
 
-const handleSaveExpense = () => {
-    if (!newExpense.category || !newExpense.payee || !newExpense.amount || !newExpense.currency) {
-        alert('Please fill in all required fields.');
-        return;
-    }
-
-    const saveRequest = isModifyMode
-        ? API.put(`/expenses/${expenseToModify.id}`, newExpense)
-        : API.post('/expenses', newExpense);
-
-    saveRequest
-        .then((response) => {
-            resetForm();
-
-            if (isModifyMode) {
-                fetchExpenses(); // just refresh the current page
-            } else {
-                // If the page is full, go to next page, else stay on current and reload
-                const isLastPage = currentPage === totalPages - 1;
-                const willOverflow = expenses.length >= pageSize;
-
-                if (isLastPage && willOverflow) {
-                    // Temporarily go to next page, then fetch data
-                    setCurrentPage(prev => prev + 1);
+    const handleSaveExpense = () => {
+        if (!newExpense.category || !newExpense.payee || !newExpense.amount || !newExpense.currency) {
+            alert('Please fill in all required fields.');
+            return;
+        }
+    
+        const saveRequest = isModifyMode
+            ? API.put(`/expenses/${expenseToModify.id}`, newExpense)
+            : API.post('/expenses', { ...newExpense, userId });
+    
+        saveRequest
+            .then((response) => {
+                if (isModifyMode) {
+                    // Update modified expense
+                    setExpenses((prev) =>
+                        prev.map((exp) => (exp.id === expenseToModify.id ? response.data : exp))
+                    );
                 } else {
-                    fetchExpenses(); // No pagination change, just refresh
+                    if (currentPage === totalPages - 1 && expenses.length < pageSize) {
+                        // If last page and has space, just add the new expense
+                        setExpenses((prev) => [...prev, response.data]);
+                    } else if (currentPage === totalPages - 1 && expenses.length === pageSize) {
+                        // If last page is full, go to the next page
+                        setCurrentPage(totalPages);
+                    } else {
+                        // If not on the last page, refetch expenses to reset pagination properly
+                        fetchExpenses();
+                    }
                 }
-            }
-        })
-        .catch((error) => console.error('Error saving expense:', error));
-};
+                resetForm();
+            })
+            .catch((error) => console.error('Error saving expense:', error));
+    };
+    
+
     const resetForm = () => {
         setNewExpense({ category: '', payee: '', amount: '', currency: '', description: '' });
         setShowModal(false);
@@ -158,15 +162,19 @@ const handleSaveExpense = () => {
     const confirmDeleteExpenses = () => {
         API.delete('/expenses', { data: selectedExpenses })
             .then(() => {
-                if (expenses.length === selectedExpenses.length && currentPage > 0) {
-                    setCurrentPage((prev) => prev - 1);
-                }
-                fetchExpenses();
+                setExpenses((prev) => prev.filter((exp) => !selectedExpenses.includes(exp.id)));
                 setSelectedExpenses([]);
+                if(expenses.length===selectedExpenses.length && currentPage>0){
+                    setCurrentPage((prev)=>prev-1);
+                }
+                else{
+                    fetchExpenses();
+                }
                 setShowConfirm(false);
             })
             .catch((error) => console.error('Error deleting expenses:', error));
     };
+
     const handleModifyExpense = (id) => {
         const expense = expenses.find((exp) => exp.id === id);
         setExpenseToModify(expense);
@@ -295,12 +303,14 @@ const handleSaveExpense = () => {
                 >
                     Previous
                 </Button>
+             
                 <span>
-                    Page {Math.min(currentPage + 1, totalPages)} of {totalPages}
+                    Page {expenses.length === 0 ? 0 : currentPage + 1} of {totalPages === 0 ? 1 : totalPages}
                 </span>
+              
                 <Button
                     variant="secondary"
-                    disabled={currentPage >= totalPages - 1}
+                    disabled={currentPage === totalPages - 1}
                     onClick={() => setCurrentPage((prev) => prev + 1)}
                 >
                     Next
