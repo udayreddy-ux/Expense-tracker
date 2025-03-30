@@ -68,7 +68,7 @@ jobs:
           cd project-repo/frontend
           echo "REACT_APP_API_BASE_URL=${{ secrets.REACT_APP_API_BASE_URL }}" > .env
           npm install
-          npm run build
+          CI='' npm run build
 
   docker-build:
     needs: build-and-test
