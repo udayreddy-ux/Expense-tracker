@@ -79,16 +79,24 @@ const Expenses = () => {
         if (userId) fetchExpenses();
     }, [userId, currentPage, sortField, sortDirection]);
 
-    const fetchExpenses = () => {
-        API.get(`/expenses/${userId}`, {
-            params: { page: currentPage, size: pageSize, sortBy: sortField, sortDirection: sortDirection },
+const fetchExpenses = () => {
+    API.get(`/expenses/${userId}`, {
+        params: { page: currentPage, size: pageSize, sortBy: sortField, sortDirection },
+    })
+        .then((response) => {
+            const { content, totalPages: pagesFromServer } = response.data;
+
+            // Adjust currentPage if it's beyond bounds
+            if (currentPage >= pagesFromServer && pagesFromServer > 0) {
+                setCurrentPage(pagesFromServer - 1); // Re-trigger fetch with valid page
+            } else {
+                setExpenses(content || []);
+                setTotalPages(pagesFromServer);
+            }
         })
-            .then((response) => {
-                setExpenses(response.data.content || []);
-                setTotalPages(response.data.totalPages);
-            })
-            .catch((error) => console.error('Error fetching expenses:', error));
-    };
+        .catch((error) => console.error('Error fetching expenses:', error));
+};
+
 
     const handleModalToggle = () => setShowModal(!showModal);
 
